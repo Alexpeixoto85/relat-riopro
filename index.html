@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Relatórios - CRM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ================================================================== */
+        /* CSS COMPLETAMENTE COPIADO DO SISTEMA RAIZ (MeuCRM2.html)           */
+        /* (Isso garante a identidade visual idêntica)                       */
+        /* ================================================================== */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #D4AF37;       /* Dourado Clássico */
+            --secondary-color: #2C3E50;     /* Azul Ardósia / Grafite */
+            --accent-color: #3498DB;        /* Azul Vibrante para Ações */
+            --background-color: #F4F6F9;    /* Cinza Muito Claro */
+            --surface-color: #FFFFFF;       /* Branco */
+            --text-color: #34495E;          /* Cinza Escuro */
+            --text-light-color: #FFF;
+            --danger-color: #E74C3C;        /* Vermelho Suave */
+            --success-color: #2ECC71;      /* Verde Suave */
+            --warning-color: #F39C12;       /* Laranja Suave */
+            --font-family: 'Montserrat', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: var(--secondary-color);
+            color: var(--text-light-color);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+        .logo-container { display: flex; align-items: center; gap: 1rem; }
+        #header-logo { max-height: 50px; border-radius: 5px; object-fit: contain; }
+        .broker-info h1 { font-size: 1.2rem; font-weight: 600; }
+        .broker-info p { font-size: 0.9rem; opacity: 0.8; }
+        main { flex-grow: 1; padding: 2rem; overflow-y: auto; }
+        .panel { display: none; animation: fadeIn 0.5s; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        input[type="text"], input[type="url"], input[type="number"], input[type="date"], input[type="time"], input[type="email"], select, textarea {
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-family: var(--font-family);
+            flex-grow: 1;
+        }
+        .btn-primary, .btn-secondary, .btn-danger, .btn-link, .btn-success {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: var(--font-family);
+            text-align: center;
+            white-space: nowrap;
+        }
+        .btn-primary { background-color: var(--primary-color); color: var(--secondary-color); }
+        .btn-primary:hover { filter: brightness(1.1); }
+        .btn-secondary { background-color: var(--secondary-color); color: var(--text-light-color); }
+        .btn-secondary:hover { filter: brightness(1.3); }
+        .btn-danger { background-color: var(--danger-color); color: var(--text-light-color); }
+        .btn-danger:hover { filter: brightness(1.1); }
+        .btn-success { background-color: var(--success-color); color: var(--text-light-color); }
+        .btn-success:hover { filter: brightness(1.1); }
+        button i, a i { margin-right: 8px; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        .settings-card, .dashboard-card {
+            background-color: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .settings-card h3, .dashboard-card h3 { margin-bottom: 1rem; color: var(--secondary-color); }
+        .settings-card input, .settings-card select { width: 100%; margin-bottom: 1rem; }
+        .settings-card button { width: 100%; margin-top: 0.5rem; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        .dashboard-card ul { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
+        .dashboard-card li { margin-bottom: 0.8rem; padding-bottom: 0.8rem; border-bottom: 1px solid #eee; }
+        .dashboard-card li:last-child { border-bottom: none; }
+        
+        /* Estilos específicos do relatório */
+        .report-summary-card {
+            grid-column: 1 / -1;
+            background-color: var(--secondary-color);
+            color: var(--text-light-color);
+        }
+        .report-summary-card h3 { color: var(--primary-color); }
+        .report-summary-card p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .report-summary-card span {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-right: 1.5rem;
+            display: inline-block;
+            min-width: 220px;
+            margin-bottom: 5px;
+        }
+        .highlight-income { color: var(--success-color); font-weight: bold; }
+        .highlight-expense { color: var(--danger-color); font-weight: bold; }
+        .highlight-completed { color: #6c757d; font-style: italic; }
+        .client-activity-tag {
+            font-size: 0.9em; 
+            color: var(--text-color); 
+            display: block; 
+            margin-top: 4px;
+            padding-left: 10px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .filter-buttons button {
+            flex-grow: 1;
+        }
+        #print-report-btn {
+            display: none; /* Começa oculto */
+        }
+
+        /* =================================================== */
+        /* INÍCIO: ESTILOS DE IMPRESSÃO (Copiados do MeuCRM2.html) */
+        /* =================================================== */
+        .print-area {
+            display: none;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: block !important;
+            }
+            
+            /* Estilos de formatação do documento */
+            .printable-document {
+                font-family: 'Roboto', sans-serif;
+                font-size: 11pt;
+                line-height: 1.5;
+                padding: 15mm;
+                color: #000;
+            }
+            .printable-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                border-bottom: 2px solid #D4AF37;
+                padding-bottom: 8mm;
+                margin-bottom: 10mm;
+            }
+            .printable-header-logo {
+                max-width: 50mm;
+                max-height: 25mm;
+                object-fit: contain;
+            }
+            .printable-header-info h1 {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 14pt;
+                color: #2C3E50;
+                margin: 0 0 5px 0;
+            }
+            .printable-header-info p {
+                margin: 0;
+                font-size: 9pt;
+            }
+            .printable-document h1, .printable-document h2, .printable-document h3 {
+                font-family: 'Montserrat', sans-serif;
+                color: #2C3E50;
+                margin-top: 8mm;
+                margin-bottom: 5mm;
+                padding-bottom: 2mm;
+                border-bottom: 1px solid #eee;
+                page-break-after: avoid;
+            }
+            .printable-document h1 { font-size: 16pt; text-align: center; }
+            .printable-document h3 { font-size: 12pt; }
+            
+            /* Estilos específicos para este relatório */
+            button {
+                display: none !important; /* Oculta todos os botões */
+            }
+            .toolbar {
+                display: none !important; /* Oculta a barra de importação */
+            }
+            
+            .dashboard-grid {
+                display: block !important; /* Força os cards a empilhar */
+                grid-template-columns: 1fr !important;
+            }
+            .dashboard-card, .settings-card {
+                page-break-inside: avoid !important;
+                border: 1px solid #ddd !important;
+                box-shadow: none !important;
+                margin-bottom: 8mm !important;
+            }
+            .report-summary-card {
+                background-color: #f4f6f9 !important; /* Fundo claro para impressão */
+                color: #000 !important;
+                grid-column: 1 !important; /* Garante que ocupe só uma coluna */
+            }
+            .report-summary-card h3 { color: #2C3E50 !important; }
+            .report-summary-card span { color: #333 !important; opacity: 1; }
+            
+            .highlight-income { color: #2ECC71 !important; }
+            .highlight-expense { color: #E74C3C !important; }
+            .highlight-completed { color: #555 !important; }
+            .client-activity-tag { color: #333 !important; }
+
+            ul {
+                max-height: none !important; /* Mostra todos os itens da lista */
+            }
+        }
+        /* =================================================== */
+        /* FIM: ESTILOS DE IMPRESSÃO                            */
+        /* =================================================== */
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img id="header-logo" src="https://via.placeholder.com/150x50.png?text=Logo+CRM" alt="Logo">
+            <div class="broker-info">
+                <h1 id="header-broker-name">Sistema de Relatório de Atividades</h1>
+                <p id="header-broker-creci">Importe seu backup do CRM</p>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="panel-report" class="panel active">
+            <h2>Relatório de Atividades</h2>
+            
+            <div class="toolbar">
+                <label for="import-backup" style="font-weight: 600; color: var(--text-color);">Importar Backup (JSON):</label>
+                <input type="file" id="import-backup" accept=".json" style="flex-grow: 0.5;">
+                <button id="load-backup-btn" class="btn-secondary"><i class="fas fa-upload"></i> Carregar Dados</button>
+            </div>
+            <p id="load-status" style="margin-bottom: 1.5rem; font-weight: 600;"></p>
+
+            <div class="settings-card" id="filter-section" style="display: none; margin-bottom: 2rem;">
+                <h3>Filtrar Período</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="start-date">Data de Início:</label>
+                        <input type="date" id="start-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date">Data de Fim:</label>
+                        <input type="date" id="end-date">
+                    </div>
+                </div>
+                <div class="filter-buttons">
+                    <button id="generate-report-btn" class="btn-primary"><i class="fas fa-search"></i> Gerar Relatório</button>
+                    <button id="print-report-btn" class="btn-success"><i class="fas fa-print"></i> Imprimir Relatório</button>
+                </div>
+            </div>
+
+            <div id="report-output" class="dashboard-grid" style="display: none;">
+                </div>
+
+        </div>
+    </main>
+    
+    <div id="print-area" class="print-area"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        let crmData = null; // Armazenará o backup JSON carregado
+        
+        const loadBackupBtn = document.getElementById('load-backup-btn');
+        const importInput = document.getElementById('import-backup');
+        const loadStatus = document.getElementById('load-status');
+        const filterSection = document.getElementById('filter-section');
+        const generateReportBtn = document.getElementById('generate-report-btn');
+        const printReportBtn = document.getElementById('print-report-btn');
+        const reportOutput = document.getElementById('report-output');
+
+        // ==========================================
+        // FUNÇÕES UTILITÁRIAS
+        // ==========================================
+        
+        const formatCurrency = (value) => {
+            if (value === null || value === undefined) value = 0;
+            return Number(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        const formatDate = (dateString) => {
+            if (!dateString) return 'Data indefinida';
+            try {
+                return new Date(dateString + 'T00:00:00').toLocaleDateString('pt-BR');
+            } catch (e) {
+                return dateString;
+            }
+        }
+        
+        const isDateInRange = (dateInput, start, end) => {
+            if (!dateInput) return false;
+            try {
+                let date;
+                if (typeof dateInput === 'string') {
+                    date = new Date(dateInput + 'T00:00:00'); // Trata strings YYYY-MM-DD
+                } else {
+                    date = new Date(dateInput); // Trata timestamps (para IDs de clientes)
+                }
+                
+                date.setHours(0, 0, 0, 0);
+
+                // start e end já são Date objects
+                const startDate = new Date(start);
+                startDate.setHours(0, 0, 0, 0);
+                
+                const endDate = new Date(end);
+                endDate.setHours(0, 0, 0, 0);
+
+                return date >= startDate && date <= endDate;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        const getPrintableHeaderHtml = () => {
+            if (!crmData || !crmData.settings) {
+                return '<p>Erro: Dados do corretor não encontrados no backup.</p>';
+            }
+            const broker = crmData.settings;
+            return `
+                <div class="printable-header">
+                    <img src="${broker.logoUrl}" alt="Logo" class="printable-header-logo">
+                    <div class="printable-header-info">
+                        <h1>${broker.brokerName}</h1>
+                        <p>${broker.brokerCreci}</p>
+                        <p>Telefone: ${broker.brokerPhone}</p>
+                    </div>
+                </div>
+            `;
+        };
+
+        // ==========================================
+        // LÓGICA DE IMPORTAÇÃO E FILTRO
+        // ==========================================
+
+        loadBackupBtn.addEventListener('click', () => {
+            const file = importInput.files[0];
+            if (!file) {
+                loadStatus.textContent = 'Por favor, selecione um arquivo de backup.';
+                loadStatus.style.color = 'var(--danger-color)';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    crmData = JSON.parse(event.target.result);
+                    if (crmData && crmData.settings) {
+                        loadStatus.textContent = `Backup de "${crmData.settings.brokerName}" carregado. Defina o período.`;
+                        loadStatus.style.color = 'var(--success-color)';
+                        filterSection.style.display = 'block';
+                        reportOutput.style.display = 'none';
+                        printReportBtn.style.display = 'none';
+                        
+                        document.getElementById('header-broker-name').textContent = `Relatórios de: ${crmData.settings.brokerName}`;
+                        document.getElementById('header-broker-creci').textContent = crmData.settings.brokerCreci;
+                        document.getElementById('header-logo').src = crmData.settings.logoUrl;
+
+                    } else {
+                        throw new Error('Arquivo não parece ser um backup válido do CRM.');
+                    }
+                } catch (error) {
+                    console.error("Erro ao carregar backup:", error);
+                    loadStatus.textContent = `Erro ao carregar o arquivo: ${error.message}`;
+                    loadStatus.style.color = 'var(--danger-color)';
+                    crmData = null;
+                    filterSection.style.display = 'none';
+                }
+            };
+            reader.onerror = () => {
+                loadStatus.textContent = 'Não foi possível ler o arquivo.';
+                loadStatus.style.color = 'var(--danger-color)';
+            };
+            reader.readAsText(file);
+        });
+
+        generateReportBtn.addEventListener('click', () => {
+            if (!crmData) {
+                alert('Primeiro, carregue um arquivo de backup.');
+                return;
+            }
+
+            const startDateStr = document.getElementById('start-date').value;
+            const endDateStr = document.getElementById('end-date').value;
+
+            if (!startDateStr || !endDateStr) {
+                alert('Por favor, defina a data de início e a data de fim.');
+                return;
+            }
+
+            const start = new Date(startDateStr + 'T00:00:00');
+            const end = new Date(endDateStr + 'T23:59:59');
+
+            const filteredData = {
+                clients: (crmData.clients || []).filter(c => isDateInRange(c.id, start, end)),
+                events: (crmData.events || []).filter(e => isDateInRange(e.date, start, end)),
+                financials: (crmData.financialRecords || []).filter(f => isDateInRange(f.startDate, start, end)),
+                dutyReports: (crmData.dutyReports || []).filter(d => isDateInRange(d.date, start, end)),
+                contracts: (crmData.contracts || []).filter(c => isDateInRange(c.date, start, end))
+            };
+
+            renderReport(filteredData, start, end);
+            printReportBtn.style.display = 'block';
+        });
+        
+        // ==========================================
+        // LÓGICA DE RENDERIZAÇÃO DO RELATÓRIO
+        // ==========================================
+
+        const renderReport = (data, start, end) => {
+            reportOutput.innerHTML = '';
+            reportOutput.style.display = 'grid';
+
+            renderSummaryCard(data, start, end);
+            renderClientsCard(data.clients);
+            renderFinancialsCard(data.financials);
+            renderEventsCard(data.events); // <--- Esta função foi atualizada
+            renderDutyReportsCard(data.dutyReports);
+            renderContractsCard(data.contracts);
+        };
+
+        const renderSummaryCard = (data, start, end) => {
+            const totalClients = data.clients.length;
+            const totalEvents = data.events.length;
+            const totalFinancials = data.financials.length;
+            const totalDutyReports = data.dutyReports.length;
+            const totalContracts = data.contracts.length;
+            const totalIncome = data.financials.filter(f => f.type === 'income').reduce((sum, f) => sum + f.value, 0);
+
+            const summaryHtml = `
+                <div class="dashboard-card report-summary-card">
+                    <h3>Resumo do Período</h3>
+                    <p>Relatório de ${start.toLocaleDateString('pt-BR')} até ${end.toLocaleDateString('pt-BR')}</p>
+                    <hr style="border-color: rgba(255,255,255,0.2); margin: 1rem 0;">
+                    <span><i class="fas fa-user-plus"></i> ${totalClients} Novos Clientes</span>
+                    <span><i class="fas fa-calendar-check"></i> ${totalEvents} Compromissos</span>
+                    <span><i class="fas fa-money-bill-wave"></i> ${totalFinancials} Lanç. Financeiros</span>
+                    <span><i class="fas fa-clipboard-list"></i> ${totalDutyReports} Plantões</span>
+                    <span><i class="fas fa-file-contract"></i> ${totalContracts} Documentos</span>
+                    <p style="margin-top: 1rem; color: var(--primary-color);">
+                        <i class="fas fa-dollar-sign"></i> Total Recebido no Período: ${formatCurrency(totalIncome)}
+                    </p>
+                </div>
+            `;
+            reportOutput.innerHTML += summaryHtml;
+        };
+        
+        const renderClientsCard = (clients) => {
+            let listHtml = '';
+            if (clients.length === 0) {
+                listHtml = '<li>Nenhum novo cliente cadastrado no período.</li>';
+            } else {
+                clients.sort((a, b) => a.id - b.id);
+                listHtml = clients.map(c => {
+                    const creationDateStr = new Date(c.id).toISOString().slice(0, 10);
+                    return `
+                        <li>
+                            <strong>${formatDate(creationDateStr)}</strong>: ${c.name}
+                            <span class="client-activity-tag">
+                                (${c.phone || 'Sem contato'} - Origem: ${c.leadSource || 'N/A'})
+                            </span>
+                        </li>`;
+                }).join('');
+            }
+            
+            const cardHtml = `
+                <div class="dashboard-card">
+                    <h3>Novos Clientes Cadastrados</h3>
+                    <ul>${listHtml}</ul>
+                </div>
+            `;
+            reportOutput.innerHTML += cardHtml;
+        };
+
+        const renderFinancialsCard = (financials) => {
+            let listHtml = '';
+            if (financials.length === 0) {
+                listHtml = '<li>Nenhum lançamento financeiro no período.</li>';
+            } else {
+                financials.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+                listHtml = financials.map(f => {
+                    const isIncome = f.type === 'income';
+                    const cssClass = isIncome ? 'highlight-income' : 'highlight-expense';
+                    const icon = isIncome ? 'fa-arrow-up' : 'fa-arrow-down';
+                    return `
+                        <li>
+                            <strong>${formatDate(f.startDate)}</strong>: ${f.description}
+                            <span class="${cssClass}">
+                                <i class="fas ${icon}"></i> ${formatCurrency(f.value)}
+                            </span>
+                        </li>`;
+                }).join('');
+            }
+            
+            const cardHtml = `
+                <div class="dashboard-card">
+                    <h3>Lançamentos Financeiros</h3>
+                    <ul>${listHtml}</ul>
+                </div>
+            `;
+            reportOutput.innerHTML += cardHtml;
+        };
+
+        /**
+         * (ATUALIZADO) Cria o Card de Compromissos, agora mostrando o cliente.
+         */
+        const renderEventsCard = (events) => {
+            let listHtml = '';
+            if (events.length === 0) {
+                listHtml = '<li>Nenhum compromisso no período.</li>';
+            } else {
+                events.sort((a, b) => new Date(a.date) - new Date(b.date));
+                listHtml = events.map(e => {
+                    const status = e.completed ? '<span class="highlight-completed">(Concluído)</span>' : '';
+                    
+                    // Tenta encontrar o cliente associado
+                    let clientTag = '';
+                    if (e.clientId && crmData.clients) {
+                        const client = crmData.clients.find(c => c.id == e.clientId);
+                        if (client) {
+                            clientTag = `<span class="client-activity-tag">(Cliente: <strong>${client.name}</strong>)</span>`;
+                        }
+                    }
+
+                    return `
+                        <li>
+                            <strong>${formatDate(e.date)} ${e.time || ''}</strong>: ${e.title} ${status}
+                            ${clientTag}
+                        </li>`;
+                }).join('');
+            }
+            
+            const cardHtml = `
+                <div class="dashboard-card">
+                    <h3>Compromissos na Agenda</h3>
+                    <ul>${listHtml}</ul>
+                </div>
+            `;
+            reportOutput.innerHTML += cardHtml;
+        };
+        
+        const renderDutyReportsCard = (reports) => {
+            let listHtml = '';
+            if (reports.length === 0) {
+                listHtml = '<li>Nenhum relatório de plantão no período.</li>';
+            } else {
+                reports.sort((a, b) => new Date(a.date) - new Date(b.date));
+                listHtml = reports.map(r => `
+                    <li>
+                        <strong>${formatDate(r.date)} - ${r.location}</strong>
+                        <ul style="padding-left: 20px; margin-top: 5px; list-style-type: disc;">
+                            ${(r.attendedClients || []).map(c => `<li>${c.name} - ${c.details || 'Sem detalhes'}</li>`).join('') || '<li>Sem clientes registrados.</li>'}
+                        </ul>
+                    </li>
+                `).join('');
+            }
+            
+            const cardHtml = `
+                <div class="dashboard-card">
+                    <h3>Relatórios de Plantão</h3>
+                    <ul>${listHtml}</ul>
+                </div>
+            `;
+            reportOutput.innerHTML += cardHtml;
+        };
+
+        const renderContractsCard = (contracts) => {
+            let listHtml = '';
+            if (contracts.length === 0) {
+                listHtml = '<li>Nenhum documento gerado no período.</li>';
+            } else {
+                contracts.sort((a, b) => new Date(a.date) - new Date(b.date));
+                listHtml = contracts.map(c => {
+                    let desc = 'Documento';
+                    switch(c.type) {
+                        case 'service_sale': desc = 'Contrato de Serviço de Venda'; break;
+                        case 'service_rental': desc = 'Contrato de Serviço de Locação'; break;
+                        case 'lease': desc = 'Contrato de Locação'; break;
+                        case 'receipt': desc = 'Recibo'; break;
+                    }
+                    return `
+                        <li>
+                            <strong>${formatDate(c.date)}</strong>: ${desc}
+                        </li>`;
+                }).join('');
+            }
+            
+            const cardHtml = `
+                <div class="dashboard-card">
+                    <h3>Documentos Gerados</h3>
+                    <ul>${listHtml}</ul>
+                </div>
+            `;
+            reportOutput.innerHTML += cardHtml;
+        };
+
+        // ==========================================
+        // LÓGICA DE IMPRESSÃO
+        // ==========================================
+        
+        printReportBtn.addEventListener('click', () => {
+            const printArea = document.getElementById('print-area');
+            const reportContent = document.getElementById('report-output').innerHTML;
+            
+            const startDate = formatDate(document.getElementById('start-date').value);
+            const endDate = formatDate(document.getElementById('end-date').value);
+            
+            const title = "Relatório de Atividades do CRM";
+            const originalTitle = document.title;
+            
+            const fullHtml = `
+                <div class="printable-document">
+                    ${getPrintableHeaderHtml()}
+                    
+                    <h1>${title}</h1>
+                    
+                    <div class="settings-card" style="page-break-inside: avoid; margin-bottom: 10mm;">
+                        <h3>Período do Relatório</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Data de Início:</label>
+                                <input type="text" value="${startDate}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Data de Fim:</label>
+                                <input type="text" value="${endDate}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        ${reportContent}
+                    </div>
+                </div>
+            `;
+            
+            printArea.innerHTML = fullHtml;
+            document.title = title;
+            window.print();
+            printArea.innerHTML = '';
+            document.title = originalTitle;
+        });
+
+    });
+    </script>
+</body>
+</html>
