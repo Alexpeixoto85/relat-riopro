@@ -93,42 +93,26 @@
         .btn-success { background-color: var(--success-color); color: var(--text-light-color); }
         .btn-success:hover { filter: brightness(1.1); }
         button i, a i { margin-right: 8px; }
-        
-        /* Layout otimizado para visualização em tela */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
         }
         .settings-card, .dashboard-card {
             background-color: var(--surface-color);
-            padding: 1.25rem;
+            padding: 1.5rem;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .settings-card h3, .dashboard-card h3 { 
-            margin-bottom: 1rem; 
-            color: var(--secondary-color); 
-            font-size: 1.2rem;
-        }
+        .settings-card h3, .dashboard-card h3 { margin-bottom: 1rem; color: var(--secondary-color); }
         .settings-card input, .settings-card select { width: 100%; margin-bottom: 1rem; }
         .settings-card button { width: 100%; margin-top: 0.5rem; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
         .form-group.full-width { grid-column: 1 / -1; }
         .form-group { display: flex; flex-direction: column; }
         .form-group label { margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
-        .dashboard-card ul { 
-            list-style: none; 
-            padding: 0; 
-            max-height: 300px; 
-            overflow-y: auto; 
-        }
-        .dashboard-card li { 
-            margin-bottom: 0.8rem; 
-            padding-bottom: 0.8rem; 
-            border-bottom: 1px solid #eee; 
-            line-height: 1.4;
-        }
+        .dashboard-card ul { list-style: none; padding: 0; max-height: 300px; overflow-y: auto; }
+        .dashboard-card li { margin-bottom: 0.8rem; padding-bottom: 0.8rem; border-bottom: 1px solid #eee; }
         .dashboard-card li:last-child { border-bottom: none; }
         
         /* Estilos específicos do relatório */
@@ -162,6 +146,11 @@
             margin-top: 4px;
             padding-left: 10px;
         }
+        .lost-sale-tag {
+            color: var(--danger-color); 
+            font-style: italic;
+            font-weight: 600;
+        }
 
         .filter-buttons {
             display: flex;
@@ -176,7 +165,7 @@
         }
 
         /* =================================================== */
-        /* ESTILOS DE IMPRESSÃO OTIMIZADOS                     */
+        /* INÍCIO: ESTILOS DE IMPRESSÃO (Copiados do MeuCRM2.html) */
         /* =================================================== */
         .print-area {
             display: none;
@@ -200,116 +189,80 @@
             /* Estilos de formatação do documento */
             .printable-document {
                 font-family: 'Roboto', sans-serif;
-                font-size: 10pt;
-                line-height: 1.3;
-                padding: 10mm;
+                font-size: 11pt;
+                line-height: 1.5;
+                padding: 15mm;
                 color: #000;
             }
             .printable-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
-                border-bottom: 1px solid #D4AF37;
-                padding-bottom: 5mm;
-                margin-bottom: 5mm;
+                border-bottom: 2px solid #D4AF37;
+                padding-bottom: 8mm;
+                margin-bottom: 10mm;
             }
             .printable-header-logo {
-                max-width: 40mm;
-                max-height: 20mm;
+                max-width: 50mm;
+                max-height: 25mm;
                 object-fit: contain;
             }
             .printable-header-info h1 {
                 font-family: 'Montserrat', sans-serif;
-                font-size: 12pt;
+                font-size: 14pt;
                 color: #2C3E50;
-                margin: 0 0 3px 0;
+                margin: 0 0 5px 0;
             }
             .printable-header-info p {
                 margin: 0;
-                font-size: 8pt;
+                font-size: 9pt;
             }
             .printable-document h1, .printable-document h2, .printable-document h3 {
                 font-family: 'Montserrat', sans-serif;
                 color: #2C3E50;
-                margin-top: 5mm;
-                margin-bottom: 3mm;
-                padding-bottom: 1mm;
+                margin-top: 8mm;
+                margin-bottom: 5mm;
+                padding-bottom: 2mm;
                 border-bottom: 1px solid #eee;
                 page-break-after: avoid;
             }
-            .printable-document h1 { 
-                font-size: 14pt; 
-                text-align: center; 
-                margin-top: 2mm;
-            }
-            .printable-document h3 { 
-                font-size: 11pt; 
-                margin-bottom: 2mm;
-            }
+            .printable-document h1 { font-size: 16pt; text-align: center; }
+            .printable-document h3 { font-size: 12pt; }
             
             /* Estilos específicos para este relatório */
-            button, .toolbar, .filter-buttons {
-                display: none !important;
+            button {
+                display: none !important; /* Oculta todos os botões */
+            }
+            .toolbar {
+                display: none !important; /* Oculta a barra de importação */
             }
             
             .dashboard-grid {
-                display: block !important;
+                display: block !important; /* Força os cards a empilhar */
                 grid-template-columns: 1fr !important;
             }
             .dashboard-card, .settings-card {
-                page-break-inside: avoid;
+                page-break-inside: avoid !important;
                 border: 1px solid #ddd !important;
                 box-shadow: none !important;
-                margin-bottom: 5mm !important;
-                padding: 3mm !important;
-                break-inside: avoid;
+                margin-bottom: 8mm !important;
             }
             .report-summary-card {
-                background-color: #f4f6f9 !important;
+                background-color: #f4f6f9 !important; /* Fundo claro para impressão */
                 color: #000 !important;
-                grid-column: 1 !important;
-                padding: 4mm !important;
+                grid-column: 1 !important; /* Garante que ocupe só uma coluna */
             }
-            .report-summary-card h3 { 
-                color: #2C3E50 !important; 
-                margin-bottom: 2mm !important;
-            }
-            .report-summary-card span { 
-                color: #333 !important; 
-                opacity: 1; 
-                min-width: 180px !important;
-                margin-right: 1rem !important;
-            }
+            .report-summary-card h3 { color: #2C3E50 !important; }
+            .report-summary-card span { color: #333 !important; opacity: 1; }
             
             .highlight-income { color: #2ECC71 !important; }
             .highlight-expense { color: #E74C3C !important; }
             .highlight-completed { color: #555 !important; }
             .client-activity-tag { color: #333 !important; }
+            .lost-sale-tag { color: #E74C3C !important; }
 
             ul {
-                max-height: none !important;
-                margin-bottom: 0 !important;
-            }
-            li {
-                margin-bottom: 2mm !important;
-                padding-bottom: 2mm !important;
-                font-size: 9pt !important;
-            }
-            
-            /* Otimizações para economia de papel */
-            .printable-document p {
-                margin-bottom: 2mm;
-            }
-            
-            /* Evita quebras de página em locais inadequados */
-            .no-break {
-                page-break-inside: avoid;
-            }
-            
-            /* Ajusta espaçamentos para impressão */
-            .print-spacing {
-                margin-top: 3mm;
-                margin-bottom: 3mm;
+                max-height: none !important; /* Mostra todos os itens da lista */
             }
         }
         /* =================================================== */
@@ -392,6 +345,12 @@
         const formatDate = (dateString) => {
             if (!dateString) return 'Data indefinida';
             try {
+                // Tenta normalizar para YYYY-MM-DD se for timestamp
+                if (typeof dateString === 'number') {
+                     dateString = new Date(dateString).toISOString().slice(0, 10);
+                }
+                
+                // Adiciona T00:00:00 para evitar problemas de fuso horário
                 return new Date(dateString + 'T00:00:00').toLocaleDateString('pt-BR');
             } catch (e) {
                 return dateString;
@@ -463,7 +422,7 @@
                         reportOutput.style.display = 'none';
                         printReportBtn.style.display = 'none';
                         
-                        document.getElementById('header-broker-name').textContent = `Relatórios de: ${crmData.settings.brokerName}`;
+                        document.getElementById('header-broker-name').textContent = ` ${crmData.settings.brokerName}`;
                         document.getElementById('header-broker-creci').textContent = crmData.settings.brokerCreci;
                         document.getElementById('header-logo').src = crmData.settings.logoUrl;
 
@@ -502,12 +461,18 @@
             const start = new Date(startDateStr + 'T00:00:00');
             const end = new Date(endDateStr + 'T23:59:59');
 
+            // =================================================================
+            // (MELHORIA 1: FILTRO DE VENDAS PERDIDAS)
+            // Assumindo que 'crmData.funnel' existe e 'dateUpdated' é a data 
+            // em que o status mudou para 'lost'.
+            // =================================================================
             const filteredData = {
                 clients: (crmData.clients || []).filter(c => isDateInRange(c.id, start, end)),
                 events: (crmData.events || []).filter(e => isDateInRange(e.date, start, end)),
                 financials: (crmData.financialRecords || []).filter(f => isDateInRange(f.startDate, start, end)),
                 dutyReports: (crmData.dutyReports || []).filter(d => isDateInRange(d.date, start, end)),
-                contracts: (crmData.contracts || []).filter(c => isDateInRange(c.date, start, end))
+                contracts: (crmData.contracts || []).filter(c => isDateInRange(c.date, start, end)),
+                lostSales: (crmData.funnel || []).filter(f => f.status === 'lost' && isDateInRange(f.dateUpdated, start, end))
             };
 
             renderReport(filteredData, start, end);
@@ -522,34 +487,52 @@
             reportOutput.innerHTML = '';
             reportOutput.style.display = 'grid';
 
+            // (MELHORIA 2: CHAMADA DA FUNÇÃO DE RENDERIZAÇÃO)
             renderSummaryCard(data, start, end);
             renderClientsCard(data.clients);
+            renderLostSalesCard(data.lostSales); // <-- NOVO CARD
             renderFinancialsCard(data.financials);
-            renderEventsCard(data.events); // <--- Esta função foi atualizada
+            renderEventsCard(data.events); 
             renderDutyReportsCard(data.dutyReports);
             renderContractsCard(data.contracts);
         };
 
+        // =================================================================
+        // (MELHORIA 3: ATUALIZAÇÃO DO CARD DE RESUMO)
+        // =================================================================
         const renderSummaryCard = (data, start, end) => {
             const totalClients = data.clients.length;
+            const totalLostSales = data.lostSales.length; // <-- NOVO
             const totalEvents = data.events.length;
             const totalFinancials = data.financials.length;
             const totalDutyReports = data.dutyReports.length;
             const totalContracts = data.contracts.length;
             const totalIncome = data.financials.filter(f => f.type === 'income').reduce((sum, f) => sum + f.value, 0);
 
+            // Calcula o percentual de perda
+            const lossPercentage = (totalClients > 0) ? (totalLostSales / totalClients) * 100 : 0;
+            const lossPercentageStr = lossPercentage.toFixed(1) + '%';
+
+
             const summaryHtml = `
                 <div class="dashboard-card report-summary-card">
                     <h3>Resumo do Período</h3>
                     <p>Relatório de ${start.toLocaleDateString('pt-BR')} até ${end.toLocaleDateString('pt-BR')}</p>
                     <hr style="border-color: rgba(255,255,255,0.2); margin: 1rem 0;">
+                    
                     <span><i class="fas fa-user-plus"></i> ${totalClients} Novos Clientes</span>
+                    <span><i class="fas fa-user-slash"></i> ${totalLostSales} Vendas Perdidas</span>
                     <span><i class="fas fa-calendar-check"></i> ${totalEvents} Compromissos</span>
                     <span><i class="fas fa-money-bill-wave"></i> ${totalFinancials} Lanç. Financeiros</span>
                     <span><i class="fas fa-clipboard-list"></i> ${totalDutyReports} Plantões</span>
                     <span><i class="fas fa-file-contract"></i> ${totalContracts} Documentos</span>
+                    
                     <p style="margin-top: 1rem; color: var(--primary-color);">
                         <i class="fas fa-dollar-sign"></i> Total Recebido no Período: ${formatCurrency(totalIncome)}
+                    </p>
+                    <p style="margin-top: 0.5rem; color: var(--danger-color); font-size: 1.2rem;">
+                        <i class="fas fa-chart-line-down"></i> Percentual de Perda: ${lossPercentageStr}
+                        <span style="font-size: 0.9rem; opacity: 0.8; margin-left: 10px;">(${totalLostSales} perdas / ${totalClients} novos clientes)</span>
                     </p>
                 </div>
             `;
@@ -561,8 +544,10 @@
             if (clients.length === 0) {
                 listHtml = '<li>Nenhum novo cliente cadastrado no período.</li>';
             } else {
-                clients.sort((a, b) => a.id - b.id);
+                // Ordena por ID (timestamp)
+                clients.sort((a, b) => a.id - b.id); 
                 listHtml = clients.map(c => {
+                    // Converte o ID (timestamp) para data
                     const creationDateStr = new Date(c.id).toISOString().slice(0, 10);
                     return `
                         <li>
@@ -576,12 +561,46 @@
             
             const cardHtml = `
                 <div class="dashboard-card">
-                    <h3>Novos Clientes Cadastrados</h3>
+                    <h3>Novos Clientes (Leads) Cadastrados</h3>
                     <ul>${listHtml}</ul>
                 </div>
             `;
             reportOutput.innerHTML += cardHtml;
         };
+
+        // =================================================================
+        // (MELHORIA 4: NOVO CARD DE VENDAS PERDIDAS)
+        // =================================================================
+        const renderLostSalesCard = (lostSales) => {
+            let listHtml = '';
+            if (lostSales.length === 0) {
+                listHtml = '<li>Nenhuma venda perdida no período.</li>';
+            } else {
+                lostSales.sort((a, b) => new Date(a.dateUpdated) - new Date(b.dateUpdated));
+                listHtml = lostSales.map(l => {
+                    // Procura o nome do cliente no backup completo
+                    const client = (crmData.clients || []).find(c => c.id == l.clientId);
+                    const clientName = client ? client.name : 'Cliente desconhecido';
+                    
+                    return `
+                        <li>
+                            <strong>${formatDate(l.dateUpdated)}</strong>: ${clientName}
+                            <span class="client-activity-tag lost-sale-tag">
+                                (Venda Perdida)
+                            </span>
+                        </li>`;
+                }).join('');
+            }
+            
+            const cardHtml = `
+                <div class="dashboard-card">
+                    <h3>Vendas Perdidas no Período</h3>
+                    <ul>${listHtml}</ul>
+                </div>
+            `;
+            reportOutput.innerHTML += cardHtml;
+        };
+
 
         const renderFinancialsCard = (financials) => {
             let listHtml = '';
@@ -612,9 +631,6 @@
             reportOutput.innerHTML += cardHtml;
         };
 
-        /**
-         * (ATUALIZADO) Cria o Card de Compromissos, agora mostrando o cliente.
-         */
         const renderEventsCard = (events) => {
             let listHtml = '';
             if (events.length === 0) {
@@ -624,7 +640,7 @@
                 listHtml = events.map(e => {
                     const status = e.completed ? '<span class="highlight-completed">(Concluído)</span>' : '';
                     
-                    // Tenta encontrar o cliente associado
+                    // Tenta encontrar o cliente associado (usa o crmData completo)
                     let clientTag = '';
                     if (e.clientId && crmData.clients) {
                         const client = crmData.clients.find(c => c.id == e.clientId);
@@ -725,7 +741,7 @@
                     
                     <h1>${title}</h1>
                     
-                    <div class="settings-card no-break" style="margin-bottom: 5mm;">
+                    <div class="settings-card" style="page-break-inside: avoid; margin-bottom: 10mm;">
                         <h3>Período do Relatório</h3>
                         <div class="form-grid">
                             <div class="form-group">
